@@ -55,7 +55,9 @@ function draw() {
   for ( const e of state.explosions ) {
     const frames = EXPLOSION_FRAMES[ e.color ];
     const i = Math.min( frames.length - 1, Math.floor( e.t / EXPLOSION_DURATION * frames.length ) );
+    if ( e.color === 'gray' ) ctx.filter = 'grayscale(1)';
     drawFrame( ctx, frames[ i ], e.x, e.y, BLOCK.w, BLOCK.h );
+    if ( e.color === 'gray' ) ctx.filter = 'none';
   }
 
   const p = state.paddle;
