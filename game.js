@@ -4,14 +4,36 @@ const ctx = canvas.getContext( '2d' );
 const CANVAS = { w: 640, h: 640 };
 const BLOCK = { w: 64, h: 32, cols: 10, top: 64 }; // sprite 32x16 escalado x2
 
-const LEVEL = [          // 7 filas x 10 cols; '.' = vacío
-  "gggggggggg",          // g=gray(3) h=hotpink(2) r=red y=yellow
-  "hhhhhhhhhh",          // c=cyan m=magenta v=green (1 golpe)
-  "rrrrrrrrrr",
-  "yyyyyyyyyy",
-  "cccccccccc",
-  "mmmmmmmmmm",
-  "vvvvvvvvvv",
+// 3 mapas de 7 filas x 10 cols; '.' = vacío
+// g=gray(3) h=hotpink(2) r=red y=yellow c=cyan m=magenta v=green (1 golpe)
+const LEVELS = [
+  [                      // mapa 1: franjas completas (igual que spec 01)
+    "gggggggggg",
+    "hhhhhhhhhh",
+    "rrrrrrrrrr",
+    "yyyyyyyyyy",
+    "cccccccccc",
+    "mmmmmmmmmm",
+    "vvvvvvvvvv",
+  ],
+  [                      // mapa 2: pirámide
+    "....gg....",
+    "...hhhh...",
+    "..rrrrrr..",
+    ".yyyyyyyy.",
+    "cccccccccc",
+    ".mmmmmmmm.",
+    "..vvvvvv..",
+  ],
+  [                      // mapa 3: filas mixtas con huecos
+    "gggggggggg",
+    "hghghghghg",
+    "r.r.r.r.r.",
+    ".y.y.y.y.y",
+    "cmcmcmcmcm",
+    "hhhhhhhhhh",
+    "g.g.g.g.g.",
+  ],
 ];
 
 const BLOCK_TYPES = {    // letra -> sprite y dureza
@@ -38,9 +60,9 @@ function playSound( name ) {
   currentSound.play().catch( () => {} ); // autoplay bloqueado: se ignora
 }
 
-function createBlocks() {
+function createBlocks( levelIndex ) {
   const blocks = [];
-  LEVEL.forEach( ( rowStr, row ) => {
+  LEVELS[ levelIndex ].forEach( ( rowStr, row ) => {
     [ ...rowStr ].forEach( ( ch, col ) => {
       const type = BLOCK_TYPES[ ch ];
       if ( type ) blocks.push( { col, row, color: type.color, hp: type.hp, maxHp: type.hp } );
@@ -55,7 +77,8 @@ const state = {
   lives: 3,
   paddle: { x: ( CANVAS.w - 120 ) / 2, y: PADDLE_Y, w: 120, h: 14, speed: 480 },
   ball: { x: CANVAS.w / 2, y: PADDLE_Y - 8, r: 8, vx: 0, vy: 0, speed: 360 },
-  blocks: createBlocks(),
+  level: 0,              // índice en LEVELS (0..2)
+  blocks: createBlocks( 0 ),
   explosions: [],        // { x, y, color, t } — t = ms transcurridos
 };
 
@@ -124,7 +147,7 @@ function resetGame() {
   state.lives = 3;
   state.paddle.x = ( CANVAS.w - state.paddle.w ) / 2;
   state.ball.vx = state.ball.vy = 0;
-  state.blocks = createBlocks();
+  state.blocks = createBlocks( state.level );
   state.explosions = [];
 }
 
@@ -155,9 +178,9 @@ function stepBall( dt ) {
   const b = state.ball;
   b.x += b.vx * dt;
   b.y += b.vy * dt;
-  if ( b.x - b.r < 0 ) { b.x = b.r; b.vx = Math.abs( b.vx ); }
-  else if ( b.x + b.r > CANVAS.w ) { b.x = CANVAS.w - b.r; b.vx = -Math.abs( b.vx ); }
-  if ( b.y - b.r < 0 ) { b.y = b.r; b.vy = Math.abs( b.vy ); }
+  if ( b.x - b.r < 0 ) { b.x = b.r; b.vx = Math.abs( b.vx ); playSound( 'bounce' ); }
+  else if ( b.x + b.r > CANVAS.w ) { b.x = CANVAS.w - b.r; b.vx = -Math.abs( b.vx ); playSound( 'bounce' ); }
+  if ( b.y - b.r < 0 ) { b.y = b.r; b.vy = Math.abs( b.vy ); playSound( 'bounce' ); }
   collideBallPaddle();
   collideBallBlocks();
   if ( b.y - b.r > CANVAS.h ) loseLife();
@@ -188,6 +211,7 @@ function collideBallBlocks() {
     else { b.y += fromBottom; b.vy = Math.abs( b.vy ); }
 
     if ( --k.hp <= 0 ) {
+      playSound( 'break' );
       state.score += k.maxHp * 10;
       state.explosions.push( { x: bx, y: by, color: k.color, t: 0 } );
       state.blocks.splice( i, 1 );
