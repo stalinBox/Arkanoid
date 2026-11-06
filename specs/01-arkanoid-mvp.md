@@ -105,20 +105,20 @@ Convenciones:
 
 ## Acceptance criteria
 
-- [ ] Abrir `index.html` (file://) carga el juego sin errores en la consola.
-- [ ] El nivel muestra 70 bloques en 7 filas x 10 columnas, con los colores definidos en `LEVEL`.
-- [ ] `←` y `→` mueven la paleta y esta no sale del canvas.
-- [ ] En `ready` la bola sigue a la paleta y `Espacio` la lanza.
-- [ ] La bola rebota en paredes laterales y techo.
-- [ ] Un impacto al centro de la paleta envía la bola en vertical; en los extremos sale a 60° respecto a la vertical (±5°).
-- [ ] Un bloque `gray` desaparece al tercer golpe, uno `hotpink` al segundo y los demás al primero.
-- [ ] Romper un bloque suma `maxHp * 10` puntos (30, 20 o 10) y el HUD se actualiza.
-- [ ] Al romper un bloque se reproduce una animación de 4 frames de ~150 ms en su posición.
-- [ ] Si la bola cae por abajo, las vidas bajan en 1 y la bola vuelve a `ready`.
-- [ ] Con 0 vidas aparece "Game Over" y `Espacio` reinicia puntuación, vidas y bloques.
-- [ ] Al destruir los 70 bloques aparece "¡Ganaste!" y `Espacio` reinicia.
-- [ ] La velocidad de la bola es la misma a 60 Hz y a 144 Hz (movimiento por `dt`).
-- [ ] `README.md` describe JS + canvas y cómo abrir el juego.
+- [X] Abrir `index.html` (file://) carga el juego sin errores en la consola.
+- [X] El nivel muestra 70 bloques en 7 filas x 10 columnas, con los colores definidos en `LEVEL`.
+- [X] `←` y `→` mueven la paleta y esta no sale del canvas.
+- [X] En `ready` la bola sigue a la paleta y `Espacio` la lanza.
+- [X] La bola rebota en paredes laterales y techo.
+- [X] Un impacto al centro de la paleta envía la bola en vertical; en los extremos sale a 60° respecto a la vertical (±5°).
+- [X] Un bloque `gray` desaparece al tercer golpe, uno `hotpink` al segundo y los demás al primero.
+- [X] Romper un bloque suma `maxHp * 10` puntos (30, 20 o 10) y el HUD se actualiza.
+- [X] Al romper un bloque se reproduce una animación de 4 frames de ~150 ms en su posición.
+- [X] Si la bola cae por abajo, las vidas bajan en 1 y la bola vuelve a `ready`.
+- [X] Con 0 vidas aparece "Game Over" y `Espacio` reinicia puntuación, vidas y bloques.
+- [X] Al destruir los 70 bloques aparece "¡Ganaste!" y `Espacio` reinicia.
+- [X] La velocidad de la bola es la misma a 60 Hz y a 144 Hz (movimiento por `dt`).
+- [X] `README.md` describe JS + canvas y cómo abrir el juego.
 
 ---
 
