@@ -4,9 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project state
 
-Arkanoid/breakout game. Early stage: no game code, build, lint, or tests exist yet — only assets and spec skills.
-
-**Stack conflict:** `README.md` says Python + Pygame, but `assets/spritesheet.js` is browser JavaScript (uses `document`, `Image`, canvas 2D context). Confirm the intended stack with the user before writing game code.
+Arkanoid/breakout game in browser JavaScript + canvas 2D (decided in spec 01). No build, lint, or tests. Open `index.html` directly (`file://`). Plain global scripts, no ES modules: `index.html` + `game.js` + `style.css` at repo root, plus `assets/spritesheet.js`.
 
 ## Assets
 

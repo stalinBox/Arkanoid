@@ -72,10 +72,10 @@ function draw() {
   ctx.textAlign = 'right';
   ctx.fillText( 'Vidas: ' + state.lives, CANVAS.w - 16, 32 );
 
-  if ( state.phase === 'lost' ) {
+  if ( state.phase === 'lost' || state.phase === 'won' ) {
     ctx.textAlign = 'center';
     ctx.font = '48px monospace';
-    ctx.fillText( 'Game Over', CANVAS.w / 2, CANVAS.h / 2 );
+    ctx.fillText( state.phase === 'won' ? '¡Ganaste!' : 'Game Over', CANVAS.w / 2, CANVAS.h / 2 );
   }
 }
 
@@ -96,7 +96,19 @@ function onSpace() {
     state.phase = 'playing';
     state.ball.vx = 0;
     state.ball.vy = -state.ball.speed;
+  } else if ( state.phase === 'won' || state.phase === 'lost' ) {
+    resetGame();
   }
+}
+
+function resetGame() {
+  state.phase = 'ready';
+  state.score = 0;
+  state.lives = 3;
+  state.paddle.x = ( CANVAS.w - state.paddle.w ) / 2;
+  state.ball.vx = state.ball.vy = 0;
+  state.blocks = createBlocks();
+  state.explosions = [];
 }
 
 function stickBallToPaddle() {
@@ -162,6 +174,7 @@ function collideBallBlocks() {
       state.score += k.maxHp * 10;
       state.explosions.push( { x: bx, y: by, color: k.color, t: 0 } );
       state.blocks.splice( i, 1 );
+      if ( state.blocks.length === 0 ) state.phase = 'won';
     }
     return; // un bloque por sub-paso
   }
