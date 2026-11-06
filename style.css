@@ -1,0 +1,16 @@
+html, body {
+  margin: 0;
+  height: 100%;
+  background: #111;
+}
+
+body {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+canvas {
+  background: #1b1b2f;
+  image-rendering: pixelated;
+}
