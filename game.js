@@ -52,6 +52,12 @@ function draw() {
     drawSprite( ctx, 'block_' + b.color, b.col * BLOCK.w, BLOCK.top + b.row * BLOCK.h, BLOCK.w, BLOCK.h );
   }
 
+  for ( const e of state.explosions ) {
+    const frames = EXPLOSION_FRAMES[ e.color ];
+    const i = Math.min( frames.length - 1, Math.floor( e.t / EXPLOSION_DURATION * frames.length ) );
+    drawFrame( ctx, frames[ i ], e.x, e.y, BLOCK.w, BLOCK.h );
+  }
+
   const p = state.paddle;
   drawSprite( ctx, 'paddle', p.x, p.y, p.w, p.h );
 
@@ -89,6 +95,9 @@ function update( dt ) {
   const p = state.paddle, b = state.ball;
   const dir = ( keys.right ? 1 : 0 ) - ( keys.left ? 1 : 0 );
   p.x = Math.max( 0, Math.min( CANVAS.w - p.w, p.x + dir * p.speed * dt ) );
+
+  for ( const e of state.explosions ) e.t += dt * 1000;
+  state.explosions = state.explosions.filter( e => e.t < EXPLOSION_DURATION );
 
   if ( state.phase === 'ready' ) {
     stickBallToPaddle();
@@ -130,6 +139,7 @@ function collideBallBlocks() {
 
     if ( --k.hp <= 0 ) {
       state.score += k.maxHp * 10;
+      state.explosions.push( { x: bx, y: by, color: k.color, t: 0 } );
       state.blocks.splice( i, 1 );
     }
     return; // un bloque por sub-paso
