@@ -1,6 +1,6 @@
 # SPEC 02 — Explosión gris para bloques gray
 
-> **Status:** Aprobado
+> **Status:** Implementado
 > **Depends on:** SPEC 01
 > **Date:** 2026-11-06
 > **Objective:** Que el bloque `gray` explote con frames en escala de grises en lugar de frames rojos.
