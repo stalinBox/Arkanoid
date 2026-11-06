@@ -90,6 +90,7 @@ const state = {
   level: 0,              // índice en LEVELS (0..2)
   blocks: createBlocks( 0 ),
   explosions: [],        // { x, y, color, t } — t = ms transcurridos
+  paused: false,         // solo se activa desde 'playing'
 };
 
 function draw() {
@@ -129,6 +130,17 @@ function draw() {
     ctx.font = '48px monospace';
     ctx.fillText( state.phase === 'won' ? '¡Ganaste!' : 'Game Over', CANVAS.w / 2, CANVAS.h / 2 );
   }
+
+  if ( state.paused ) {
+    ctx.fillStyle = 'rgba(0, 0, 0, 0.5)';
+    ctx.fillRect( 0, 0, CANVAS.w, CANVAS.h );
+    ctx.fillStyle = '#fff';
+    ctx.textAlign = 'center';
+    ctx.font = '48px monospace';
+    ctx.fillText( 'Pausa', CANVAS.w / 2, CANVAS.h / 2 );
+    ctx.font = '20px monospace';
+    ctx.fillText( 'Espacio para continuar', CANVAS.w / 2, CANVAS.h / 2 + 48 );
+  }
 }
 
 const keys = { left: false, right: false };
@@ -167,12 +179,20 @@ function onSpace() {
     state.ball.speed = DIFFICULTIES[ state.difficulty ].ballSpeed * ( 1 + LEVEL_SPEED_STEP * state.level );
     state.ball.vx = 0;
     state.ball.vy = -state.ball.speed;
+  } else if ( state.phase === 'playing' ) {
+    togglePause();
   } else if ( state.phase === 'won' || state.phase === 'lost' ) {
     resetGame();
   }
 }
 
+function togglePause() {
+  state.paused = !state.paused;
+  if ( state.paused && currentSound ) currentSound.pause(); // evita sonido colgado
+}
+
 function resetGame() {
+  state.paused = false;
   state.phase = 'ready';
   state.score = 0;
   state.level = 0;
@@ -277,11 +297,12 @@ function collideBallPaddle() {
   b.vx = b.speed * Math.sin( angle );
   b.vy = -b.speed * Math.cos( angle );
   b.y = p.y - b.r;
+  playSound( 'bounce' );
 }
 
 let lastTime = null;
 function frame( now ) {
-  if ( lastTime !== null ) update( Math.min( ( now - lastTime ) / 1000, 0.05 ) ); // dt en s, tope 50 ms
+  if ( lastTime !== null && !state.paused ) update( Math.min( ( now - lastTime ) / 1000, 0.05 ) ); // dt en s, tope 50 ms
   lastTime = now;
   draw();
   requestAnimationFrame( frame );
