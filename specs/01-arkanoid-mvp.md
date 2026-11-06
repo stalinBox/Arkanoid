@@ -1,6 +1,6 @@
 # SPEC 01 — MVP jugable de Arkanoid
 
-> **Status:** Borrador
+> **Status:** Aprobado
 > **Depends on:** ninguna
 > **Date:** 2026-11-06
 > **Objective:** Un juego de Arkanoid jugable en el navegador (JS + canvas) con un nivel fijo, vidas, puntuación, bloques multi-golpe y animación de explosión.
