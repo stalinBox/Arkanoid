@@ -46,12 +46,12 @@ Esta feature no introduce estructuras de datos nuevas. Reutiliza `state.explosio
 
 ## Acceptance criteria
 
-- [ ] Al romper un bloque `gray` la explosión se ve en escala de grises, sin tonos rojos.
-- [ ] La explosión gray mantiene 4 frames y ~150 ms.
-- [ ] Las explosiones de los otros 6 colores no cambian.
-- [ ] Tras una explosión gray, paleta, bola, bloques y HUD se dibujan sin filtro.
-- [ ] `assets/spritesheet.js` queda sin modificar.
-- [ ] No hay errores en la consola.
+- [X] Al romper un bloque `gray` la explosión se ve en escala de grises, sin tonos rojos.
+- [X] La explosión gray mantiene 4 frames y ~150 ms.
+- [X] Las explosiones de los otros 6 colores no cambian.
+- [X] Tras una explosión gray, paleta, bola, bloques y HUD se dibujan sin filtro.
+- [X] `assets/spritesheet.js` queda sin modificar.
+- [X] No hay errores en la consola.
 
 ---
 
