@@ -1,6 +1,6 @@
 # SPEC 03 — Sonidos, mapas y dificultad
 
-> **Status:** Aprobado
+> **Status:** Implementado
 > **Depends on:** SPEC 01, SPEC 02
 > **Date:** 2026-11-06
 > **Objective:** Añadir sonidos de rebote y rotura sin mezclarse, 3 mapas progresivos y 3 dificultades elegibles al juego existente.
@@ -98,25 +98,25 @@ Conventions:
 
 ## Acceptance criteria
 
-- [ ] Abrir `index.html` (file://) carga sin errores en la consola.
-- [ ] Al rebotar la bola en pared izquierda, derecha o techo suena `ball-bounce.mp3`.
-- [ ] Al golpear la paleta, o un bloque sin romperlo, no suena nada.
-- [ ] Al romper un bloque suena `break-sound.mp3`.
-- [ ] Si un sonido está sonando y se dispara otro, el primero se detiene y solo se oye el nuevo.
-- [ ] Un mismo sonido disparado dos veces seguidas se reinicia (no se superponen copias).
-- [ ] Un fallo de `play()` (autoplay bloqueado) no genera error no capturado en la consola.
-- [ ] El mapa 1 se ve igual que el nivel de la spec 01 (70 bloques).
-- [ ] Hay 3 mapas distintos entre sí y cada uno tiene 10 columnas.
-- [ ] Al limpiar el mapa 1 o 2, aparece el siguiente mapa en `ready` con la bola pegada a la paleta, y puntos y vidas sin cambio.
-- [ ] Al limpiar el mapa 3 aparece "¡Ganaste!" y `Espacio` reinicia en el mapa 1.
-- [ ] La velocidad de la bola es x1.0, x1.1 y x1.2 de la base en los mapas 1, 2 y 3.
-- [ ] En `normal` (por defecto): bola 360 px/s, paleta 120 px, 3 vidas en el mapa 1.
-- [ ] En `easy`: bola 300 px/s, paleta 160 px, 5 vidas. En `hard`: 440 px/s, 90 px, 2 vidas.
-- [ ] Las teclas `1` / `2` / `3` cambian la dificultad en `ready` antes de la primera bola lanzada.
-- [ ] Tras lanzar la primera bola, las teclas `1` / `2` / `3` no cambian la dificultad.
-- [ ] Tras `won` o `lost`, `Espacio` reinicia en el mapa 1 con la última dificultad elegida.
-- [ ] El HUD muestra `Nivel N/3` y la dificultad, y se actualiza al cambiar.
-- [ ] `assets/spritesheet.js` queda sin modificar.
+- [X] Abrir `index.html` (file://) carga sin errores en la consola.
+- [X] Al rebotar la bola en pared izquierda, derecha o techo suena `ball-bounce.mp3`.
+- [X] Al golpear la paleta, o un bloque sin romperlo, no suena nada.
+- [X] Al romper un bloque suena `break-sound.mp3`.
+- [X] Si un sonido está sonando y se dispara otro, el primero se detiene y solo se oye el nuevo.
+- [X] Un mismo sonido disparado dos veces seguidas se reinicia (no se superponen copias).
+- [X] Un fallo de `play()` (autoplay bloqueado) no genera error no capturado en la consola.
+- [X] El mapa 1 se ve igual que el nivel de la spec 01 (70 bloques).
+- [X] Hay 3 mapas distintos entre sí y cada uno tiene 10 columnas.
+- [X] Al limpiar el mapa 1 o 2, aparece el siguiente mapa en `ready` con la bola pegada a la paleta, y puntos y vidas sin cambio.
+- [X] Al limpiar el mapa 3 aparece "¡Ganaste!" y `Espacio` reinicia en el mapa 1.
+- [X] La velocidad de la bola es x1.0, x1.1 y x1.2 de la base en los mapas 1, 2 y 3.
+- [X] En `normal` (por defecto): bola 360 px/s, paleta 120 px, 3 vidas en el mapa 1.
+- [X] En `easy`: bola 300 px/s, paleta 160 px, 5 vidas. En `hard`: 440 px/s, 90 px, 2 vidas.
+- [X] Las teclas `1` / `2` / `3` cambian la dificultad en `ready` antes de la primera bola lanzada.
+- [X] Tras lanzar la primera bola, las teclas `1` / `2` / `3` no cambian la dificultad.
+- [X] Tras `won` o `lost`, `Espacio` reinicia en el mapa 1 con la última dificultad elegida.
+- [X] El HUD muestra `Nivel N/3` y la dificultad, y se actualiza al cambiar.
+- [X] `assets/spritesheet.js` queda sin modificar.
 
 ---
 

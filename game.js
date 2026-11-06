@@ -71,12 +71,22 @@ function createBlocks( levelIndex ) {
   return blocks;
 }
 
+const DIFFICULTIES = {
+  easy:   { ballSpeed: 300, paddleW: 160, lives: 5 },
+  normal: { ballSpeed: 360, paddleW: 120, lives: 3 },
+  hard:   { ballSpeed: 440, paddleW: 90,  lives: 2 },
+};
+const LEVEL_SPEED_STEP = 0.10; // +10 % de velocidad por mapa
+const DIFFICULTY_LABELS = { easy: 'Fácil', normal: 'Normal', hard: 'Difícil' }; // texto del HUD
+
 const state = {
   phase: "ready",        // "ready" | "playing" | "won" | "lost"
   score: 0,
-  lives: 3,
-  paddle: { x: ( CANVAS.w - 120 ) / 2, y: PADDLE_Y, w: 120, h: 14, speed: 480 },
-  ball: { x: CANVAS.w / 2, y: PADDLE_Y - 8, r: 8, vx: 0, vy: 0, speed: 360 },
+  lives: DIFFICULTIES.normal.lives,
+  difficulty: "normal",  // clave de DIFFICULTIES; sobrevive a resetGame
+  started: false,        // true tras lanzar la primera bola de la partida
+  paddle: { x: ( CANVAS.w - DIFFICULTIES.normal.paddleW ) / 2, y: PADDLE_Y, w: DIFFICULTIES.normal.paddleW, h: 14, speed: 480 },
+  ball: { x: CANVAS.w / 2, y: PADDLE_Y - 8, r: 8, vx: 0, vy: 0, speed: DIFFICULTIES.normal.ballSpeed },
   level: 0,              // índice en LEVELS (0..2)
   blocks: createBlocks( 0 ),
   explosions: [],        // { x, y, color, t } — t = ms transcurridos
@@ -109,6 +119,8 @@ function draw() {
   ctx.textBaseline = 'middle';
   ctx.textAlign = 'left';
   ctx.fillText( 'Puntos: ' + state.score, 16, 32 );
+  ctx.textAlign = 'center';
+  ctx.fillText( 'Nivel ' + ( state.level + 1 ) + '/' + LEVELS.length + ' · ' + DIFFICULTY_LABELS[ state.difficulty ], CANVAS.w / 2, 32 );
   ctx.textAlign = 'right';
   ctx.fillText( 'Vidas: ' + state.lives, CANVAS.w - 16, 32 );
 
@@ -121,19 +133,38 @@ function draw() {
 
 const keys = { left: false, right: false };
 
+const DIFFICULTY_KEYS = { Digit1: 'easy', Digit2: 'normal', Digit3: 'hard' };
+
 function setKey( e, down ) {
   if ( e.code === 'ArrowLeft' ) keys.left = down;
   else if ( e.code === 'ArrowRight' ) keys.right = down;
   else if ( e.code === 'Space' ) { if ( down && !e.repeat ) onSpace(); }
+  else if ( DIFFICULTY_KEYS[ e.code ] ) {
+    // solo en 'ready' antes de lanzar la primera bola de la partida
+    if ( down && state.phase === 'ready' && !state.started ) {
+      state.difficulty = DIFFICULTY_KEYS[ e.code ];
+      applyDifficulty();
+    }
+  }
   else return;
   e.preventDefault();
 }
 window.addEventListener( 'keydown', e => setKey( e, true ) );
 window.addEventListener( 'keyup', e => setKey( e, false ) );
 
+// Paleta y vidas según la dificultad actual
+function applyDifficulty() {
+  const d = DIFFICULTIES[ state.difficulty ];
+  state.paddle.w = d.paddleW;
+  state.paddle.x = ( CANVAS.w - d.paddleW ) / 2;
+  state.lives = d.lives;
+}
+
 function onSpace() {
   if ( state.phase === 'ready' ) {
     state.phase = 'playing';
+    state.started = true;
+    state.ball.speed = DIFFICULTIES[ state.difficulty ].ballSpeed * ( 1 + LEVEL_SPEED_STEP * state.level );
     state.ball.vx = 0;
     state.ball.vy = -state.ball.speed;
   } else if ( state.phase === 'won' || state.phase === 'lost' ) {
@@ -144,8 +175,9 @@ function onSpace() {
 function resetGame() {
   state.phase = 'ready';
   state.score = 0;
-  state.lives = 3;
-  state.paddle.x = ( CANVAS.w - state.paddle.w ) / 2;
+  state.level = 0;
+  state.started = false;
+  applyDifficulty();
   state.ball.vx = state.ball.vy = 0;
   state.blocks = createBlocks( state.level );
   state.explosions = [];
@@ -192,6 +224,17 @@ function loseLife() {
   state.ball.vx = state.ball.vy = 0;
 }
 
+// Sin bloques: pasa al siguiente mapa en 'ready' (puntos y vidas se conservan) o gana en el último
+function clearLevel() {
+  if ( state.level >= LEVELS.length - 1 ) { state.phase = 'won'; return; }
+  state.level++;
+  state.blocks = createBlocks( state.level );
+  state.explosions = [];
+  state.ball.vx = state.ball.vy = 0;
+  stickBallToPaddle();
+  state.phase = 'ready';
+}
+
 function collideBallBlocks() {
   const b = state.ball;
   for ( let i = 0; i < state.blocks.length; i++ ) {
@@ -215,7 +258,7 @@ function collideBallBlocks() {
       state.score += k.maxHp * 10;
       state.explosions.push( { x: bx, y: by, color: k.color, t: 0 } );
       state.blocks.splice( i, 1 );
-      if ( state.blocks.length === 0 ) state.phase = 'won';
+      if ( state.blocks.length === 0 ) clearLevel();
     }
     return; // un bloque por sub-paso
   }
