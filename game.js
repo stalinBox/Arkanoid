@@ -23,6 +23,21 @@ const BLOCK_TYPES = {    // letra -> sprite y dureza
 
 const PADDLE_Y = 600;
 
+// Sonidos: un único canal compartido; el sonido nuevo corta al que esté sonando
+const SOUNDS = {
+  bounce: new Audio( 'assets/sounds/ball-bounce.mp3' ),
+  break:  new Audio( 'assets/sounds/break-sound.mp3' ),
+};
+for ( const s of Object.values( SOUNDS ) ) s.preload = 'auto';
+let currentSound = null; // el que suena ahora, o null
+
+function playSound( name ) {
+  if ( currentSound ) { currentSound.pause(); currentSound.currentTime = 0; }
+  currentSound = SOUNDS[ name ];
+  currentSound.currentTime = 0;
+  currentSound.play().catch( () => {} ); // autoplay bloqueado: se ignora
+}
+
 function createBlocks() {
   const blocks = [];
   LEVEL.forEach( ( rowStr, row ) => {
