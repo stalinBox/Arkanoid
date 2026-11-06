@@ -63,6 +63,20 @@ function draw() {
 
   const b = state.ball;
   drawSprite( ctx, 'ball', b.x - b.r, b.y - b.r, b.r * 2, b.r * 2 );
+
+  ctx.fillStyle = '#fff';
+  ctx.font = '20px monospace';
+  ctx.textBaseline = 'middle';
+  ctx.textAlign = 'left';
+  ctx.fillText( 'Puntos: ' + state.score, 16, 32 );
+  ctx.textAlign = 'right';
+  ctx.fillText( 'Vidas: ' + state.lives, CANVAS.w - 16, 32 );
+
+  if ( state.phase === 'lost' ) {
+    ctx.textAlign = 'center';
+    ctx.font = '48px monospace';
+    ctx.fillText( 'Game Over', CANVAS.w / 2, CANVAS.h / 2 );
+  }
 }
 
 const keys = { left: false, right: false };
@@ -104,7 +118,7 @@ function update( dt ) {
   } else if ( state.phase === 'playing' ) {
     // sub-pasos: el desplazamiento por paso nunca supera el radio (evita efecto túnel)
     const steps = Math.ceil( b.speed * dt / b.r );
-    for ( let i = 0; i < steps; i++ ) stepBall( dt / steps );
+    for ( let i = 0; i < steps && state.phase === 'playing'; i++ ) stepBall( dt / steps );
   }
 }
 
@@ -117,6 +131,13 @@ function stepBall( dt ) {
   if ( b.y - b.r < 0 ) { b.y = b.r; b.vy = Math.abs( b.vy ); }
   collideBallPaddle();
   collideBallBlocks();
+  if ( b.y - b.r > CANVAS.h ) loseLife();
+}
+
+function loseLife() {
+  state.lives--;
+  state.phase = state.lives > 0 ? 'ready' : 'lost';
+  state.ball.vx = state.ball.vy = 0;
 }
 
 function collideBallBlocks() {
